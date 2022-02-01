@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+    <springProperty scope="context" name="LOG_HOME" source="logging.file.path" defaultValue="c:/logs" />
+    <springProperty scope="context" name="LOG_ROOT_LEVEL" source="logging.level.root" defaultValue="INFO" />
+    <springProperty scope="context" name="STDOUT" source="log.stdout" defaultValue="STDOUT"/>
+
+    <property name="LOG_PREFIX" value="alta.log" />
+    <property name="LOG_CHARSET" value="UTF-8" />
+    <property name="LOG_DIR" value="${LOG_HOME}" />
+    <property name="LOG_MSG" value="- [%d{yyyy-MM-dd HH:mm:ss.SSS}] | [%level] | [${HOSTNAME}] | [%thread] | [%logger{36}] -> %msg %n" />
+    <property name="MAX_FILE_SIZE" value="30KB" />
+    <property name="MAX_CAP_SIZE" value="90KB" />
+    <property name="MAX_HISTORY" value="10" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${LOG_MSG}</pattern>
+        </layout>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${LOG_PREFIX}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/archived/%d{yyyy-MM-dd}/${LOG_PREFIX}.%i.log</fileNamePattern>
+            <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
+            <totalSizeCap>${MAX_CAP_SIZE}</totalSizeCap>
+            <maxHistory>${MAX_HISTORY}</maxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${LOG_MSG}</pattern>
+        </layout>
+    </appender>
+
+    <logger name="org.springframework" level="INFO" />
+    <logger name="com.challenge.alta" level="INFO" />
+
+    <root level="${LOG_ROOT_LEVEL}">
+        <appender-ref ref="${STDOUT}" />
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>
